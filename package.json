@@ -1,0 +1,27 @@
+{
+  "name": "tokenregisty",
+  "version": "1.0.0",
+  "description": "token registy project",
+  "main": "yes",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "no"
+  },
+  "keywords": [
+    "token",
+    "registry"
+  ],
+  "author": "ZeroPass-Nejc",
+  "license": "ISC",
+  "dependencies": {
+    "ethereumjs-testrpc": "^6.0.3",
+    "npm-git-install": "^0.3.0",
+    "web3": "github:ethereum/web3.js"
+  },
+  "devDependencies": {
+    "truffle": "^4.0.5"
+  }
+}

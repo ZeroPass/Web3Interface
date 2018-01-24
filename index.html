@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+
+        <h1>Token Registry - validation of signature</h1>
+
+        <label for="name" class="col-lg-2 control-label">Address</label>
+        <input id="address" type="text">
+		<label for="name" class="col-lg-2 control-label">hash of address</label>
+		<input id="haddress" type="text">
+		<label for="name" class="col-lg-2 control-label">public key</label>
+		<input id="pubKey" type="text">
+		<label for="name" class="col-lg-2 control-label">signature</label>
+		<input id="signature" type="text">
+
+        <button id="button">Validate signature</button>
+
+
+    </div>
+	<br><br><br>
+	<div class="container">
+
+        <h1>Token Registry - check address</h1>
+
+        <label for="name" class="col-lg-2 control-label">Address</label>
+        <input id="address1" type="text">
+		<label for="name" class="col-lg-2 control-label">Is valid?:</label>
+        <input id="isValid" type="text" disabled >
+        <button id="button1">Check address</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        }
+		//web3.eth.defaultAccount = "0xa475a4D590d5B96Deca1FC671eEfdb9a12590987";
+        web3.eth.defaultAccount = web3.eth.accounts[0];
+
+		var TokenRegistryContract = web3.eth.contract(
+				[
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "hash",
+				"type": "bytes"
+			},
+			{
+				"name": "s",
+				"type": "bytes"
+			},
+			{
+				"name": "e",
+				"type": "bytes"
+			},
+			{
+				"name": "m",
+				"type": "bytes"
+			}
+		],
+		"name": "RSAVerify",
+		"outputs": [
+			{
+				"name": "",
+				"type": "int256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "currentAddress",
+				"type": "address"
+			}
+		],
+		"name": "checkAddress",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "currentAddress",
+				"type": "address"
+			},
+			{
+				"name": "hashedAddress",
+				"type": "bytes"
+			},
+			{
+				"name": "signDevicePublicKey",
+				"type": "bytes"
+			},
+			{
+				"name": "signToCheck",
+				"type": "bytes"
+			},
+			{
+				"name": "exponent",
+				"type": "bytes"
+			}
+		],
+		"name": "checkAndSaveSignature",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "v",
+				"type": "uint256[1]"
+			}
+		],
+		"name": "uints2bytes",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "v",
+				"type": "uint256[4]"
+			}
+		],
+		"name": "uints2bytes",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+		
+		);
+		
+		//contract addrsss on ethereum blockchain
+		var TokenRegistry = TokenRegistryContract.at('0xEE2Ba50c1CBD227A035090d99deC587Ae9EfB3bC');
+        console.log(TokenRegistry);
+		
+		//call the function to validate contract
+        $("#button").click(function() {
+            TokenRegistry.checkAndSaveSignature($("#address").val(), $("#haddress").val(), $("#pubKey").val(), $("#signature").val(), "0x010001"
+			);
+        });
+		
+		//call the function to check address
+        $("#button1").click(function() {
+            TokenRegistry.checkAndSaveSignature($("#address1").val(), function(error, result){
+            if(!error)
+                {
+                    $("#isValid").html('Valid:' + result[0]);
+                    console.log(result);
+                }
+            else
+                console.error(error);
+        });
+        });
+    </script>
+
+</body>
+</html>
